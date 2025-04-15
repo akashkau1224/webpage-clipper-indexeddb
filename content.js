@@ -10,18 +10,27 @@ function extractTextContent(doc) {
   
   // Limit to first 100 words
   const words = bodyText.split(/\s+/);
-  const firstHundredWords = words.slice(0, 100).join(' ');
+  const wordCount = words.length;
+  const readingTime = Math.ceil(wordCount / 200);
+  const firstHundredWords = words.slice(0, 100).join(' ') + (words.length > 100 ? '...' : '');
   
-  return firstHundredWords + (words.length > 100 ? '...' : '');
+  return {
+    content: firstHundredWords,
+    wordCount: wordCount,
+    readingTime: readingTime
+  };
 }
 
 // Function to clip the current page
 function clipCurrentPage() {
+  const textData = extractTextContent(document);
   const pageData = {
     title: document.title,
     url: window.location.href,
     timestamp: new Date().toISOString(),
-    content: extractTextContent(document)
+    content: textData.content,
+    wordCount: textData.wordCount,
+    readingTime: textData.readingTime,   
   };
   
   // Send the data to the background script
